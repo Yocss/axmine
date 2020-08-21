@@ -21,3 +21,9 @@ test('Test getType(true): should be \'boolean\'', () => {
 test('Test getType(() => {}): should be \'function\'', () => {
   expect(helper.getType(() => {})).toBe('function')
 })
+
+// test store
+// const store = helper.store
+// test('Test store.set()', () => {
+//   expect(store.set('key1', 111).toBe(false))
+// })
