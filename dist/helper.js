@@ -1,5 +1,5 @@
 /**
- * @axmine/helper v1.0.3
+ * @axmine/helper v1.0.5
  * (c) 2019-2020 yocss https://github.com/yocss/axmine.git
  * License: MIT
  * Released on: Aug 21, 2020
@@ -143,8 +143,113 @@
 	    return Store;
 	}());
 
+	var supRules = ['required', 'len', 'min', 'max', 'enum', 'type', 'pattern', 'validator'];
+	function validate(rules, form) {
+	    // 遍历校验规则
+	    var result = { status: true, infos: [] };
+	    Object.keys(rules).forEach(function (k) {
+	        // 校验规则 类型为 array
+	        var rule = [].concat(rules[k]);
+	        // 等待被校验的值
+	        var val = form[k];
+	        for (var i = 0; i < rule.length; i++) {
+	            // 逐条进行校验
+	            var res = validRule(rule[i], val);
+	            if (!res.status) {
+	                // res.key = k
+	                result.infos.push({ message: res.message, key: k });
+	                break;
+	            }
+	        }
+	    });
+	    result.status = result.infos.length < 1;
+	    return result;
+	}
+	function validRule(rule, val) {
+	    var res = { status: true, message: rule.message || '' };
+	    var keys = Object.keys(rule);
+	    var valType = getType(val);
+	    // 1. 检查字段是否为必检字段
+	    var isRequired = false;
+	    // 2. 如果是必检字段，则检查值是否为空
+	    var isNull = /^\s+$/.test(val) || ['', undefined, null].includes(val);
+	    // 是否必检
+	    if (keys.includes('required') && rule['required']) {
+	        res.status = !isNull;
+	        isRequired = rule['required'] === true;
+	    }
+	    // 字段值为空并且为非必检时，直接通过验证
+	    var pass = !isRequired && isNull;
+	    // 字段必检或字段值不为空的时候，继续执行其他检查
+	    if (!pass && res.status) {
+	        for (var i = 0; i < keys.length; i++) {
+	            var ruleVal = rule[keys[i]];
+	            // 确保是在支持的校验规则之内
+	            if (supRules.includes(keys[i])) {
+	                // 检查其他字段是否合规
+	                switch (keys[i]) {
+	                    case 'len': {
+	                        res.status = val.length === ruleVal * 1;
+	                        break;
+	                    }
+	                    case 'min': {
+	                        if (valType === 'number') {
+	                            res.status = val >= ruleVal;
+	                        }
+	                        else {
+	                            res.status = val.length >= ruleVal;
+	                        }
+	                        break;
+	                    }
+	                    case 'max': {
+	                        if (valType === 'number') {
+	                            res.status = val <= ruleVal;
+	                        }
+	                        else {
+	                            res.status = val.length <= ruleVal;
+	                        }
+	                        break;
+	                    }
+	                    case 'enum': {
+	                        res.status = ruleVal.includes(val);
+	                        break;
+	                    }
+	                    case 'type': {
+	                        res.status = ruleVal.toLowerCase() === valType;
+	                        break;
+	                    }
+	                    case 'pattern': {
+	                        var reg = new RegExp(ruleVal);
+	                        res.status = reg.test(val);
+	                        break;
+	                    }
+	                    case 'validator': {
+	                        if (getType(ruleVal) === 'function') {
+	                            res.status = ruleVal(val);
+	                        }
+	                        else {
+	                            throw new Error('validator 不是一个函数');
+	                        }
+	                        break;
+	                    }
+	                }
+	            }
+	            // 只要有一项检查不合格，则退出当前循环
+	            if (!res.status) {
+	                break;
+	            }
+	        }
+	    }
+	    return res;
+	}
+
 	// time format
-	var index = { formatDate: formatDate, getType: getType, store: new Store() };
+	var index = {
+	    formatDate: formatDate,
+	    getType: getType,
+	    store: new Store(),
+	    validate: validate
+	};
 
 	return index;
 
