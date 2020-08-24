@@ -29,10 +29,15 @@ class Store {
   private setStorage(key: string, value: any, expireDays: number = 7, type: Type = Type.localStorage): boolean {
     let bool = window && window[type] ? true : false
     if (bool) {
-      const t = expireDays > 0 ? (new Date().getTime()) * 1 + (expireDays * 86400000) : 0
-      const val = JSON.stringify({ v: value, t})
-      window[type].setItem(key, val)
-      bool = this.getStorage(key) === value
+      try {
+        const t = expireDays > 0 ? (new Date().getTime()) * 1 + (expireDays * 86400000) : 0
+        const val = JSON.stringify({ v: value, t})
+        window[type].setItem(key, val)
+        bool = this.getStorage(key) === value
+      } catch {
+        bool = false
+        console.error('数据格式化失败')
+      }
     }
     return bool
   }
@@ -40,13 +45,17 @@ class Store {
   private getStorage(key: string, type: Type = Type.localStorage): string {
     let res = ''
     if (window && window[type]) {
-      const v = window[type].getItem(key) || `{"v":'',"t":0}`
-      const obj = JSON.parse(v)
-      const now = new Date().getTime()
-      res = obj.v
-      if (type === 'localStorage' && obj.t > 0 && now > obj.t) {
-        res = ''
-        this.removeStorage(key)
+      try {
+        const v = window[type].getItem(key) || `{"v":"","t":0}`
+        const obj = JSON.parse(v)
+        const now = new Date().getTime()
+        res = obj.v
+        if (type === 'localStorage' && obj.t > 0 && now > obj.t) {
+          res = ''
+          this.removeStorage(key)
+        }
+      } catch {
+        console.error('数据格式错误')
       }
     }
     return res
