@@ -1,5 +1,5 @@
 /**
- * @axmine/helper v1.0.5
+ * @axmine/helper v1.0.7
  * (c) 2019-2020 yocss https://github.com/yocss/axmine.git
  * License: MIT
  * Released on: Aug 21, 2020
@@ -61,10 +61,16 @@ var Store = /** @class */ (function () {
         if (type === void 0) { type = Type.localStorage; }
         var bool = window && window[type] ? true : false;
         if (bool) {
-            var t = expireDays > 0 ? (new Date().getTime()) * 1 + (expireDays * 86400000) : 0;
-            var val = JSON.stringify({ v: value, t: t });
-            window[type].setItem(key, val);
-            bool = this.getStorage(key) === value;
+            try {
+                var t = expireDays > 0 ? (new Date().getTime()) * 1 + (expireDays * 86400000) : 0;
+                var val = JSON.stringify({ v: value, t: t });
+                window[type].setItem(key, val);
+                bool = this.getStorage(key) === value;
+            }
+            catch (_a) {
+                bool = false;
+                console.error('数据格式化失败');
+            }
         }
         return bool;
     };
@@ -72,13 +78,18 @@ var Store = /** @class */ (function () {
         if (type === void 0) { type = Type.localStorage; }
         var res = '';
         if (window && window[type]) {
-            var v = window[type].getItem(key) || "{\"v\":'',\"t\":0}";
-            var obj = JSON.parse(v);
-            var now = new Date().getTime();
-            res = obj.v;
-            if (type === 'localStorage' && obj.t > 0 && now > obj.t) {
-                res = '';
-                this.removeStorage(key);
+            try {
+                var v = window[type].getItem(key) || "{\"v\":\"\",\"t\":0}";
+                var obj = JSON.parse(v);
+                var now = new Date().getTime();
+                res = obj.v;
+                if (type === 'localStorage' && obj.t > 0 && now > obj.t) {
+                    res = '';
+                    this.removeStorage(key);
+                }
+            }
+            catch (_a) {
+                console.error('数据格式错误');
             }
         }
         return res;
