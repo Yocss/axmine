@@ -1,6 +1,6 @@
 {
   "name": "@axmine/helper",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "js function helper",
   "main": "dist/helper.min.js",
   "scripts": {
