@@ -36,10 +36,43 @@ helper.formatDate(111100000)
 ---|:-:|---|----
 formatDate()|格式化时间戳|sec: number // 需要处理的时间戳<br>format?: string // 格式化后的样式 默认值: 'y-m-d h:i'|string
 getType()|判断数据类型| data: any // 需要被判断的数据|string
+validate()|表单数据验证| rule:object // { keyname: [{ required: true, message: '参数不能为空' }] }<br>form:object // { keyname: '我是大铁锅' }|object
 store.set()|往 localStorage、sessionStorage 或 cookie中存储数据|key: string // 键名<br>value: any // 要保存的值<br>options?: { expireDays?: 7, type?: 'localStorage' } // type可选值： 'localStorage, sessionStorage, cookie'|boolean
 store.get()|取出数据|key: string // 要取出的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|string
 store.remove()|删除数据|key: string // 要删除的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|boolean
 
+## validate()示例
+
+```javascript
+import { validate } from '@axmine/helper'
+// validate(rule, form)
+// rule: 校验规则，示例：{ 字段名：校验规则 }
+// form: 被校验的表单：{ 字段名：值 }
+// 校验规则示例： { required: true, message: '此项必填' }, message是报错信息，不可缺少。
+/**
+ * 完整的支持的校验规则：
+ * required // 是否为必填
+ * len // 长度
+ * min  // 当值为数字类型时，表示最小值，否则表示最小长度
+ * max  // 当值为数字类型时，表示最大值，否则表示最大长度
+ * enum // 枚举，如：['a', 'b', 'c']， 表示值只能是a 或 b 或 c
+ * type // 类型 如：'number', 表示值只能是数字，支持所有的js原始数据类型
+ * pattern // 正则，如：/abc/， 表示值里包含abc则通过验证
+ * validator // 自定义校验方法：如：validator: (val) => val > 100
+ */
+// 举例： 要验证一个密码，必填，长度6-18位之间
+const rule = { password: { required: true, min: 6, max: 18, message: '密码不符合规范' } }
+const form = { user: 'john', password: 'abcde' }
+validate(rule, form) // { status: false, infos: [{ message: '密码不符合规范', key: 'password' }] }
+// 或者 把验证条件分开写，这样可以得到更精确的报错信息
+const rule = { password: [
+  { required: true, message: '密码不能为空' },
+  { min: 6, message: '密码必须大于或等于6位' },
+  { max: 18, message: '密码长度不得大于18位' },
+  ] }
+const form = { user: 'john', password: 'abcde' }
+validate(rule, form) // { status: false, infos: [{ message: '密码必须大于或等于6位', key: 'password' }] }
+```
 
 ## store代码示例
 ```javascript
