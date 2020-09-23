@@ -1,6 +1,8 @@
 # @axmine/helper
-[![NPM Version][npm-image]][npm-url] [![size-image]][size-url] [![NPM Downloads][downloads-image]][downloads-url]
+### 自用的js方法收集
 
+ [![NPM Version][npm-image]][npm-url] [![GitHub license](https://img.shields.io/github/license/Yocss/axmine)](https://github.com/Yocss/axmine/blob/master/LICENSE) [![size-image]][size-url]
+<!-- [![NPM Downloads][downloads-image]][downloads-url] -->
 [size-image]: https://badgen.net/bundlephobia/minzip/@axmine/helper
 [size-url]: https://bundlephobia.com/result?p=@axmine/helper
 [npm-image]: https://badgen.net/npm/v/@axmine/helper
@@ -8,7 +10,6 @@
 [downloads-image]: https://badgen.net/npm/dt/@axmine/helper
 [downloads-url]: https://www.npmjs.com/package/@axmine/helper
 
-自用的js方法收集
 
 ## 使用方式
 
@@ -37,6 +38,8 @@ helper.formatDate(111100000)
 formatDate()|格式化时间戳|sec: number // 需要处理的时间戳<br>format?: string // 格式化后的样式 默认值: 'y-m-d h:i'|string
 getType()|判断数据类型| data: any // 需要被判断的数据|string
 validate()|表单数据验证| rule:object // { keyname: [{ required: true, message: '参数不能为空' }] }<br>form:object // { keyname: '我是大铁锅' }|object
+random()|取任意两个数之间的随机数|min:number // 默认是0<br>max:number // 默认为1<br>type: string // 返回浮点数或整数，默认为float, 取值 'float' 或 'int'|number
+camelCase()|将字符串改为驼峰格式|str:string // 要被转换的字符，当字符中存在字母时，字符串中的下划线和中横线都会被替换为空，并且将整个字符串并转换成驼峰样式|string
 store.set()|往 localStorage、sessionStorage 或 cookie中存储数据|key: string // 键名<br>value: any // 要保存的值<br>options?: { expireDays?: 7, type?: 'localStorage' } // type可选值： 'localStorage, sessionStorage, cookie'|boolean
 store.get()|取出数据|key: string // 要取出的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|string
 store.remove()|删除数据|key: string // 要删除的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|boolean
@@ -99,6 +102,21 @@ store.set('token': 'abad123lkdfivailkolq90912', { type: 'cookie' }) // return: t
 // store.set('token': 'abad123lkdfivailkolq90912', { expireDays: 30, type: 'cookie' }) // 30 天内数据不会失效
 store.get('token', type: 'cookie') // return: 'abad123lkdfivailkolq90912'
 store.remove('token', type: 'cookie') // return: true
+```
+
+## Change log
+
+2020.09.23:
+1. Add function: random(min:number, max:number, [type = 'float']) // 取任意两个数之间的随机数
+2. Add function: camelCase(str: string) // 将字符串转换成驼峰样式
+
+## 开发说明
+```bash
+// 打包
+npm run build
+
+// 测试
+npm run test
 ```
 
 ## License

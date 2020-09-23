@@ -1,5 +1,5 @@
 /**
- * @axmine/helper v1.0.7
+ * @axmine/helper v1.0.9
  * (c) 2019-2020 yocss https://github.com/yocss/axmine.git
  * License: MIT
  * Released on: Aug 21, 2020
@@ -254,12 +254,66 @@
 	    return res;
 	}
 
+	// Math.random
+	var Num;
+	(function (Num) {
+	    Num["Float"] = "float";
+	    Num["Int"] = "int";
+	})(Num || (Num = {}));
+	function random(min, max, type) {
+	    if (min === void 0) { min = 0; }
+	    if (max === void 0) { max = 1; }
+	    if (type === void 0) { type = Num.Float; }
+	    if (getType(min) !== 'number' || getType(max) !== 'number') {
+	        throw Error('min and max must be a number');
+	    }
+	    if (min > max) {
+	        throw Error('min or max is outside of its valid range.');
+	    }
+	    var res = Math.random() * (max - min + 1) + min;
+	    if (type === 'int') {
+	        res = Math.floor(res);
+	    }
+	    return res;
+	}
+
+	function camelCase(str) {
+	    if (getType(str) !== 'string') {
+	        throw Error('str must be string.');
+	    }
+	    var hasLetter = /[a-zA-Z]/.test(str);
+	    var res = hasLetter ? str.replace(/\-{1,}/g, '_') : str;
+	    if (hasLetter) {
+	        res = res.replace(/\_{1,}/, '_');
+	        res = res.indexOf('_') === 0 ? res.slice(1) : res;
+	        res = res.lastIndexOf('_') === res.length - 1 ? res.slice(0, -1) : res;
+	        var aStr = res.split('_');
+	        var len = aStr.length;
+	        if (len > 1) {
+	            var first = aStr[0].toLowerCase();
+	            var last = '';
+	            for (var i = 1; i < len; i++) {
+	                var temp = aStr[i].toLowerCase();
+	                if (temp.length > 1) {
+	                    var firstLetter = temp[0].toUpperCase();
+	                    temp = firstLetter + temp.slice(1);
+	                }
+	                last += temp;
+	            }
+	            res = first + last;
+	        }
+	    }
+	    return res;
+	}
+
 	// time format
 	var index = {
 	    formatDate: formatDate,
 	    getType: getType,
 	    store: new Store(),
-	    validate: validate
+	    validate: validate,
+	    random: random,
+	    camelCase: camelCase
 	};
 
 	return index;
