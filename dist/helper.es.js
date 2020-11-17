@@ -300,6 +300,48 @@ function camelCase(str) {
     return res;
 }
 
+function setStore(state, data) {
+    var _a;
+    var val = data;
+    if (data['key'] !== undefined && data['value'] !== undefined) {
+        val = (_a = {}, _a[data['key']] = data['value'], _a);
+    }
+    Object.keys(val).forEach(function (k) {
+        if (getType(val[k]) === 'object') {
+            Object.assign(state[k], val[k]);
+        }
+        else {
+            state[k] === val[k];
+        }
+    });
+}
+var vuex = {
+    mutations: {
+        SET_STORE: function (state, data) {
+            var type = getType(data);
+            if (!['array', 'object'].includes(type)) {
+                throw new Error('data 类型不正确');
+            }
+            switch (type) {
+                case 'array':
+                    data.forEach(function (val) {
+                        setStore(state, val);
+                    });
+                    break;
+                case 'object':
+                    setStore(state, data);
+                    break;
+            }
+        }
+    },
+    actions: {
+        SetStore: function (_a, data) {
+            var commit = _a.commit;
+            commit('SET_STORE', data);
+        }
+    }
+};
+
 // time format
 var index = {
     formatDate: formatDate,
@@ -307,7 +349,8 @@ var index = {
     store: new Store(),
     validate: validate,
     random: random,
-    camelCase: camelCase
+    camelCase: camelCase,
+    vuex: vuex
 };
 
 export default index;
