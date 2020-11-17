@@ -1,5 +1,5 @@
 /**
- * @axmine/helper v1.0.9
+ * @axmine/helper v1.1.0
  * (c) 2019-2020 yocss https://github.com/yocss/axmine.git
  * License: MIT
  * Released on: Aug 21, 2020
@@ -44,7 +44,7 @@
 	/**
 	 * store data
 	 */
-	var Store = /** @class */ (function () {
+	var Store$1 = /** @class */ (function () {
 	    function Store() {
 	    }
 	    Store.prototype.set = function (key, value, options) {
@@ -153,6 +153,13 @@
 	    };
 	    return Store;
 	}());
+
+	var Type$1;
+	(function (Type) {
+	    Type["localStorage"] = "localStorage";
+	    Type["sessionStorage"] = "sessionStorage";
+	    Type["cookie"] = "cookie";
+	})(Type$1 || (Type$1 = {}));
 
 	var supRules = ['required', 'len', 'min', 'max', 'enum', 'type', 'pattern', 'validator'];
 	function validate(rules, form) {
@@ -352,7 +359,8 @@
 	var index = {
 	    formatDate: formatDate,
 	    getType: getType,
-	    store: new Store(),
+	    store: new Store$1(),
+	    cookie: Store,
 	    validate: validate,
 	    random: random,
 	    camelCase: camelCase,
