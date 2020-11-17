@@ -40,9 +40,13 @@ getType()|判断数据类型| data: any // 需要被判断的数据|string
 validate()|表单数据验证| rule:object // { keyname: [{ required: true, message: '参数不能为空' }] }<br>form:object // { keyname: '我是大铁锅' }|object
 random()|取任意两个数之间的随机数|min:number // 默认是0<br>max:number // 默认为1<br>type: string // 返回浮点数或整数，默认为float, 取值 'float' 或 'int'|number
 camelCase()|将字符串改为驼峰格式|str:string // 要被转换的字符，当字符中存在字母时，字符串中的下划线和中横线都会被替换为空，并且将整个字符串并转换成驼峰样式|string
-store.set()|往 localStorage、sessionStorage 或 cookie中存储数据|key: string // 键名<br>value: any // 要保存的值<br>options?: { expireDays?: 7, type?: 'localStorage' } // type可选值： 'localStorage, sessionStorage, cookie'|boolean
-store.get()|取出数据|key: string // 要取出的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|string
-store.remove()|删除数据|key: string // 要删除的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|boolean
+<s>store.set()</s>（请使用cookie对象代替）|往 localStorage、sessionStorage 或 cookie中存储数据|key: string // 键名<br>value: any // 要保存的值<br>options?: { expireDays?: 7, type?: 'localStorage' } // type可选值： 'localStorage, sessionStorage, cookie'|boolean
+<s>store.get()</s>（请使用cookie对象代替）|取出数据|key: string // 要取出的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|string
+<s>store.remove()</s>（请使用cookie对象代替）|删除数据|key: string // 要删除的键名<br>type?: 'localStorage' // type可选值： 'localStorage, sessionStorage, cookie'|boolean
+cookie（类）|请先实例化再调用|const cookie = new cookie(type = 'localStorage')<br>默认: 'localStorage',可选值，sessionStorage | cookie|object
+cookie.set()|将数据存入浏览器cookie或localStorage或sessionStorage中|key:string // 键<br>value:any //值<br>expireDays:number // 存储天数，默认为7，可省略|boolean
+cookie.get()|将数据取出|key:string // 键|string
+cookie.remove()|移除数据|key:string // 键|boolean
 vuex.mutations.SET_STORE()|统一全部项目的setStore方法|void
 vuex.actions.SetStore()|类似于react里的setData()方法|void
 
@@ -79,29 +83,24 @@ const form = { user: 'john', password: 'abcde' }
 validate(rule, form) // { status: false, infos: [{ message: '密码必须大于或等于6位', key: 'password' }] }
 ```
 
-## store代码示例
+## store代码示例(即将弃用), 请改用cookie
 ```javascript
+import { cookie } from '@axmine/helper'
+const store = new cookie()
+store.set('user', 'xiaoming', 7) // 将xiaoming存储在键名为user的对象里，有效期为7天
+store.get('user') // 获取user的值
+store.remove('user') // 移除user
+
+// 以下方法已弃用，请使用上方的cooie类代替
 import { store } from '@axmine/helper'
-/**
-  注： store.set() 方法第三个参数是 options = { expireDays: 7 type: 'localStorage' }
-  a. 当 type 为 'sessionStorage' 时， expireDays 不会生效
-  b. 当 type 为 'localStorage' 时， expireDays <= 0 代表数据不会过期
-*/
-// 1. 在 localStorage 中存储，获取，移除数据
+// 注： store.set() 方法第三个参数是 options = { expireDays: 7 type: 'localStorage' }
 store.set('user': 'john') // return: true // 默认 7 天有效
-// store.set('user': 'john', { expireDays: 0 }) // 若不主动删除，则永久有效
-// store.set('user': 'john', { expireDays: 30 }) // 30 天内数据不会失效
 store.get('user') // return: 'john'
 store.remove('user') // return: true
-
-// 2. 在 sessionStorage 中存储，获取，移除数据，网页被关闭时数据则失效
 store.set('token': 'abad123lkdfivailkolq90912', { type: 'sessionStorage' }) // return: true
 store.get('token', type: 'sessionStorage') // return: 'abad123lkdfivailkolq90912'
 store.remove('token', type: 'sessionStorage') // return: true
-
-// 3. 在 cookie 中存储，获取，移除数据
 store.set('token': 'abad123lkdfivailkolq90912', { type: 'cookie' }) // return: true  默认七天有效
-// store.set('token': 'abad123lkdfivailkolq90912', { expireDays: 30, type: 'cookie' }) // 30 天内数据不会失效
 store.get('token', type: 'cookie') // return: 'abad123lkdfivailkolq90912'
 store.remove('token', type: 'cookie') // return: true
 ```
