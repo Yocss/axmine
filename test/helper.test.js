@@ -234,3 +234,12 @@ test('Test camelCase(\'__a_d\')', () => {
 test('Test camelCase(\'__a_d__ef_\')', () => {
   expect(helper.camelCase('__a_d__ef_')).toBe('adEf')
 })
+
+// test('Test vuex.mutations.SET_STORE', () => {
+//   // expect(helper.vuex.mutations.SET_STORE({}, { key: 'haha' })).toEqual({key: 'haha'})
+//   const data = {key: 'abc'}
+//   console.log(helper.vuex.mutations.SET_STORE(data, { key: 'haha' }))
+//   expect(helper.vuex.mutations.SET_STORE(data, { key: 'haha' })).toEqual({
+//     key: 'haha'
+//   })
+// })
