@@ -4,6 +4,7 @@ import { formatDate } from './utils/formatDate'
 import { getType } from './utils/getType'
 // cookie
 import Store from './utils/store'
+import Cookie from './utils/cookie'
 // validate
 import { validate } from './utils/validate'
 // random
@@ -19,6 +20,7 @@ export default {
   formatDate,
   getType,
   store: new Store(),
+  cookie: Cookie,
   validate,
   random,
   camelCase,
