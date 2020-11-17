@@ -12,11 +12,15 @@ import { random } from './utils/random'
 //camelCase
 import { camelCase } from './utils/camelCase'
 
+// vuex
+import vuex from './utils/vuex'
+
 export default {
   formatDate,
   getType,
   store: new Store(),
   validate,
   random,
-  camelCase
+  camelCase,
+  vuex
 }
