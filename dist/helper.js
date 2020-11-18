@@ -1,5 +1,5 @@
 /**
- * @axmine/helper v1.1.0
+ * @axmine/helper v1.1.1
  * (c) 2019-2020 yocss https://github.com/yocss/axmine.git
  * License: MIT
  * Released on: Aug 21, 2020
@@ -424,46 +424,45 @@
 	}
 
 	function setStore(state, data) {
-	    var _a;
-	    var val = data;
-	    if (data['key'] !== undefined && data['value'] !== undefined) {
-	        val = (_a = {}, _a[data['key']] = data['value'], _a);
+	    var type = getType(data);
+	    if (!['array', 'object'].includes(type)) {
+	        throw new Error('data 类型不正确');
 	    }
-	    Object.keys(val).forEach(function (k) {
-	        if (getType(val[k]) === 'object') {
-	            Object.assign(state[k], val[k]);
+	    var arrs = [].concat(data);
+	    arrs.forEach(function (item) {
+	        var _a;
+	        var val = item;
+	        if (item['key'] !== undefined && item['value'] !== undefined) {
+	            val = (_a = {}, _a[item['key']] = item['value'], _a);
 	        }
-	        else {
-	            state[k] === val[k];
-	        }
+	        Object.keys(val).forEach(function (k) {
+	            if (getType(val[k]) === 'object') {
+	                Object.assign(state[k], val[k]);
+	            }
+	            else {
+	                state[k] === val[k];
+	            }
+	        });
 	    });
 	}
-	var vuex = {
-	    mutations: {
-	        SET_STORE: function (state, data) {
-	            var type = getType(data);
-	            if (!['array', 'object'].includes(type)) {
-	                throw new Error('data 类型不正确');
-	            }
-	            switch (type) {
-	                case 'array':
-	                    data.forEach(function (val) {
-	                        setStore(state, val);
-	                    });
-	                    break;
-	                case 'object':
-	                    setStore(state, data);
-	                    break;
-	            }
-	        }
-	    },
-	    actions: {
-	        SetStore: function (_a, data) {
-	            var commit = _a.commit;
-	            commit('SET_STORE', data);
-	        }
-	    }
-	};
+	// export default {
+	//   SET_STORE: (state: object, data: any) => {
+	//     const type = getType(data)
+	//     if (!['array', 'object'].includes(type)) {
+	//       throw new Error('data 类型不正确')
+	//     }
+	//     switch (type) {
+	//       case 'array':
+	//         data.forEach(val => {
+	//           setStore(state, val)
+	//         })
+	//         break
+	//       case 'object':
+	//         setStore(state, data)
+	//         break
+	//     }
+	//   }
+	// }
 
 	// time format
 	var index = {
@@ -474,7 +473,7 @@
 	    validate: validate,
 	    random: random,
 	    camelCase: camelCase,
-	    vuex: vuex
+	    setStore: setStore
 	};
 
 	return index;
