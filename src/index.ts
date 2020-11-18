@@ -13,8 +13,7 @@ import { random } from './utils/random'
 //camelCase
 import { camelCase } from './utils/camelCase'
 
-// vuex
-import vuex from './utils/vuex'
+import { setStore } from './utils/mutations'
 
 export default {
   formatDate,
@@ -24,5 +23,5 @@ export default {
   validate,
   random,
   camelCase,
-  vuex
+  setStore
 }
