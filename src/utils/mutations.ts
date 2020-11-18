@@ -18,6 +18,7 @@ export function setStore (state: object, data: any) {
       }
     })
   })
+  return state
 }
 
 // export default {
