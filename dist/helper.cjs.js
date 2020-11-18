@@ -1,5 +1,5 @@
 /**
- * @axmine/helper v1.1.1
+ * @axmine/helper v1.1.2
  * (c) 2019-2020 yocss https://github.com/yocss/axmine.git
  * License: MIT
  * Released on: Aug 21, 2020
@@ -440,6 +440,7 @@ function setStore(state, data) {
             }
         });
     });
+    return state;
 }
 // export default {
 //   SET_STORE: (state: object, data: any) => {
