@@ -113,4 +113,4 @@ class Cookie {
     return bool
   }
 }
-export default Store
+export default Cookie
