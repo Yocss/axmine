@@ -44,7 +44,7 @@
 	/**
 	 * store data
 	 */
-	var Store$1 = /** @class */ (function () {
+	var Store = /** @class */ (function () {
 	    function Store() {
 	    }
 	    Store.prototype.set = function (key, value, options) {
@@ -160,6 +160,116 @@
 	    Type["sessionStorage"] = "sessionStorage";
 	    Type["cookie"] = "cookie";
 	})(Type$1 || (Type$1 = {}));
+	/**
+	 * store data
+	 */
+	var Cookie = /** @class */ (function () {
+	    function Cookie(type) {
+	        if (type === void 0) { type = Type$1.localStorage; }
+	        this.type = type;
+	    }
+	    Cookie.prototype.set = function (key, value, expireDays) {
+	        if (expireDays === void 0) { expireDays = 7; }
+	        var type = this.type;
+	        return type === 'cookie' ? this.setCookie(key, value, expireDays) : this.setStorage(key, value, expireDays, type);
+	    };
+	    Cookie.prototype.get = function (key) {
+	        return this.type === 'cookie' ? this.getCookie(key) : this.getStorage(key, this.type);
+	    };
+	    Cookie.prototype.remove = function (key) {
+	        return this.type === 'cookie' ? this.removeCookie(key) : this.removeStorage(key, this.type);
+	    };
+	    Cookie.prototype.setStorage = function (key, value, expireDays, type) {
+	        if (expireDays === void 0) { expireDays = 7; }
+	        if (type === void 0) { type = Type$1.localStorage; }
+	        var bool = window && window[type] ? true : false;
+	        if (bool) {
+	            try {
+	                var t = expireDays > 0 ? (new Date().getTime()) * 1 + (expireDays * 86400000) : 0;
+	                var val = JSON.stringify({ v: value, t: t });
+	                window[type].setItem(key, val);
+	                bool = this.getStorage(key) === value;
+	            }
+	            catch (_a) {
+	                bool = false;
+	                console.error('数据格式化失败');
+	            }
+	        }
+	        return bool;
+	    };
+	    Cookie.prototype.getStorage = function (key, type) {
+	        if (type === void 0) { type = Type$1.localStorage; }
+	        var res = '';
+	        if (window && window[type]) {
+	            try {
+	                var v = window[type].getItem(key) || "{\"v\":\"\",\"t\":0}";
+	                var obj = JSON.parse(v);
+	                var now = new Date().getTime();
+	                res = obj.v;
+	                if (type === 'localStorage' && obj.t > 0 && now > obj.t) {
+	                    res = '';
+	                    this.removeStorage(key);
+	                }
+	            }
+	            catch (_a) {
+	                console.error('数据格式错误');
+	            }
+	        }
+	        return res;
+	    };
+	    Cookie.prototype.removeStorage = function (key, type) {
+	        if (type === void 0) { type = Type$1.localStorage; }
+	        var bool = window && window[type] ? true : false;
+	        if (bool) {
+	            window[type].removeItem(key);
+	            bool = this.getStorage(key) === '';
+	        }
+	        return bool;
+	    };
+	    Cookie.prototype.setCookie = function (key, value, expireDays) {
+	        if (expireDays === void 0) { expireDays = 7; }
+	        var bool = window && window.navigator.cookieEnabled;
+	        // if (!bool) { throw new Error('当前环境不支持 cookie 或 cookie 未启用') }
+	        if (bool) {
+	            var exdate = new Date();
+	            exdate.setDate(exdate.getDate() + expireDays);
+	            var expires = expireDays ? ";expires=" + exdate.toUTCString() : '';
+	            document.cookie = key + "=" + escape(value) + expires;
+	            bool = this.getCookie(key) === value;
+	        }
+	        return bool;
+	    };
+	    Cookie.prototype.getCookie = function (key) {
+	        var bool = window && window.navigator.cookieEnabled;
+	        // if (!bool) { throw new Error('当前环境不支持 cookie 或 cookie 未启用') }
+	        var res = '';
+	        if (bool) {
+	            if (document.cookie.length > 0) {
+	                var start = document.cookie.indexOf(key + '=');
+	                if (start >= 0) {
+	                    start = start + key.length + 1;
+	                    var end = document.cookie.indexOf(';', start);
+	                    if (end === -1)
+	                        end = document.cookie.length;
+	                    res = unescape(document.cookie.substring(start, end));
+	                }
+	            }
+	        }
+	        return res;
+	    };
+	    Cookie.prototype.removeCookie = function (key) {
+	        var bool = window && window.navigator.cookieEnabled;
+	        // if (!bool) { throw new Error('当前环境不支持 cookie 或 cookie 未启用') }
+	        if (bool) {
+	            bool = this.getCookie(key) ? true : false;
+	            if (bool) {
+	                this.setCookie(key, '', -1);
+	            }
+	        }
+	        return bool;
+	    };
+	    return Cookie;
+	}());
 
 	var supRules = ['required', 'len', 'min', 'max', 'enum', 'type', 'pattern', 'validator'];
 	function validate(rules, form) {
@@ -359,8 +469,8 @@
 	var index = {
 	    formatDate: formatDate,
 	    getType: getType,
-	    store: new Store$1(),
-	    cookie: Store,
+	    store: new Store(),
+	    cookie: Cookie,
 	    validate: validate,
 	    random: random,
 	    camelCase: camelCase,
