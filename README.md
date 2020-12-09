@@ -47,8 +47,6 @@ cookie（类）|请先实例化再调用|const cookie = new cookie(type = 'local
 cookie.set()|将数据存入浏览器cookie或localStorage或sessionStorage中|key:string // 键<br>value:any //值<br>expireDays:number // 存储天数，默认为7，可省略|boolean
 cookie.get()|将数据取出|key:string // 键|string
 cookie.remove()|移除数据|key:string // 键|boolean
-vuex.mutations.SET_STORE()|统一全部项目的setStore方法|void
-vuex.actions.SetStore()|类似于react里的setData()方法|void
 
 ## validate()示例
 
